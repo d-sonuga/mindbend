@@ -93,6 +93,28 @@ pub fn err_attempt_to_leach_expr_onto_itself(pos: usize) -> String {
     )
 }
 
+pub fn err_chain_leach_expression_ending_without_chain_leach_expression(pos: usize) -> String {
+    format!(
+        "Ending a chain leach expression without a chain leach expression at the nth token, \
+        where n is around {}",
+        pos
+    )
+}
+
+pub fn err_triple_six_eq_not_expected_here(pos: usize) -> String {
+    format!(
+        "^^^^^^666^^^^^^= not expected at the nth token, where n is around {}",
+        pos
+    )
+}
+
+pub fn err_triple_six_not_expected_here(pos: usize) -> String {
+    format!(
+        "^^^^^^666^^^^^^ not expected at the nth token, where n is around {}",
+        pos
+    )
+}
+
 pub fn err_invalid_primitive_access_region_not_layers_runtime() -> String {
     format!("Attempt to access primitive when not in layers region\n")
 }

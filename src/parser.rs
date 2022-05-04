@@ -84,6 +84,7 @@ impl Parser {
     }
     fn parse_expressions(&mut self) -> Result<OrganismExpression, String> {
         let child: Box<dyn Expression>;
+        let mut next_org_expr: Option<Box<OrganismExpression>> = None;
         match self.tokens.next().unwrap() {
             (pos, Token::PrimitiveIdent(p_ident)) => {
                 match self.validate_primitive_access(pos){
@@ -181,10 +182,35 @@ impl Parser {
             (pos, Token::Tilde) => {
                 return Err(errors::err_leach_expression_must_start_with_primitive_or_cell(pos))
             }
-            a => {
-                println!("{:?}", a);
-                unimplemented!()
+            (pos, Token::TripleSixEqM) => {
+                return Err(errors::err_chain_leach_expression_ending_without_chain_leach_expression(pos))
             }
+            (pos, Token::TripleSixEq) => {
+                return Err(errors::err_triple_six_eq_not_expected_here(pos))
+            }
+            (pos, Token::TripleSix) => {
+                return Err(errors::err_triple_six_not_expected_here(pos))
+            }
+            (_, Token::TripleSixEqO) => {
+                let mut new_next_org_expr;
+                if self.tokens.peek().is_some(){
+                    match self.parse_expressions(){
+                        Ok(org_expr) => new_next_org_expr = org_expr,
+                        Err(err) => return Err(err)
+                    };
+                    use std::mem;
+                    let dummy_expr = Box::new(DummyExpression::new());
+                    let dummy_expr1 = Box::new(DummyExpression::new());
+                    let dummy_org_expr = Some(Box::new(OrganismExpression::new(dummy_expr1, None)));
+                    child = mem::replace(&mut new_next_org_expr.child, dummy_expr);
+                    next_org_expr = mem::replace(&mut new_next_org_expr.right, dummy_org_expr);
+                } else {
+                    child = Box::new(DummyExpression::new());
+                }
+            }
+        }
+        if next_org_expr.is_some(){
+            return Ok(OrganismExpression::new(child, next_org_expr))
         }
         if self.tokens.peek().is_some(){
             match self.parse_expressions(){

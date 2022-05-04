@@ -58,6 +58,10 @@ fn main(){
             process::exit(1);
         }
     };
+    if tokens.len() == 0 {
+        eprintln!("Only Organism death.");
+        process::exit(1);
+    }
     let mut parser = parser::Parser::new(tokens);
     let ast: parser::OrganismExpression;
     let labels: Vec<String>;
