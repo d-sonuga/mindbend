@@ -72,6 +72,13 @@ impl Parser {
     }
     pub fn parse(&mut self) -> Result<(OrganismExpression, Vec<String>), String> {
         let parse_result = self.parse_expressions();
+        for (pos, label) in self.encountered_labels.iter().enumerate() {
+            for (pos1, label1) in self.encountered_labels.iter().enumerate() {
+                if pos != pos1 && label == label1 {
+                    return Err(errors::err_duplicate_label(pos, pos1))
+                }
+            }
+        }
         for (pos, label) in self.encountered_jumps.iter() {
             if !self.encountered_labels.contains(label){
                 return Err(errors::err_attempt_to_jump_to_non_existent_label(*pos))

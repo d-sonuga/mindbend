@@ -77,6 +77,14 @@ pub fn err_attempt_to_jump_to_non_existent_label(pos: usize) -> String {
     )
 }
 
+pub fn err_duplicate_label(pos1: usize, pos2: usize) -> String {
+    format!(
+        "Label name at the nth token duplicated in the label name at the mth token, \
+        where n is around {} and m is around {}",
+        pos1, pos2
+    )
+}
+
 pub fn err_leach_expression_must_start_with_primitive_or_cell(pos: usize) -> String {
     format!(
         "The leach expression at the nth token, where n is around {}, \
